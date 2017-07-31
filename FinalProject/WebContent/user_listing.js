@@ -20,13 +20,12 @@ function connect(username) {
 				<a href="#" class="image"><img src="images/miller.jpg" "/></a> \
 				<div class="inner">                    \
 					<h4>'+message.projectName+'</h4>               \
-					<p>'+message.projectBrief+'Project brief introduction</p>       \
+					<p>'+message.projectBrief+'</p>       \
 				</div>                                      \
 			</article>                                      \
 					</div>\
 		';
     	
-        log.innerHTML += message.from + " : project#" + message.projectID + " "+message.projectName+"\n"+message.projectBrief+"\n";
     };
 }
 

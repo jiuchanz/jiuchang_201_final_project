@@ -49,24 +49,29 @@ public class project_register extends HttpServlet {
 			}
 			System.out.println(userID);
 			List<Integer> skills=new  ArrayList<Integer>();
-			for(int h=0;h<selected.length;h++)
+			if(selected!=null)
 			{
-				sql="SELECT skillID FROM skills where skillname='"+selected[h]+"' ;";
-				rs=st.executeQuery(sql);
-				int skillID=0;
-				while(rs.next())
+				for(int h=0;h<selected.length;h++)
 				{
-					skillID=rs.getInt("skillID");
+					sql="SELECT skillID FROM skills where skillname='"+selected[h]+"' ;";
+					rs=st.executeQuery(sql);
+					int skillID=0;
+					while(rs.next())
+					{
+						skillID=rs.getInt("skillID");
+					}
+					skills.add(skillID);
+					
 				}
-				skills.add(skillID);
-				
 			}
+			
 			Project project =new Project(userID,projectName,brief,skills,description);
+			
 			project.addProjectToDB(st);
 			
 			HttpSession session =request.getSession();
-	         session.setAttribute("project",project);
-	         session.setAttribute("user",new User("guest","root"));
+			session.setAttribute("project", project);
+	         
 	         RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/project_detail.jsp");
 	         dispatch.forward(request, response);
 			

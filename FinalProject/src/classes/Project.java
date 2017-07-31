@@ -10,7 +10,7 @@ public class Project {
 	private String projectAbstract;
 	private String description;
 	private int administratorID;
-	
+	private boolean openstatus=true;
 	public Project(int userId, String projectName, String projectAbstract, List<Integer> skills,
 			String description) {
 		
@@ -23,7 +23,8 @@ public class Project {
 	            set.add(skills.get(h));
 	    }//ends for	
 	}//ends project constructor
-	
+	public void setOpenstatus(boolean value){this.openstatus=value;}
+	public boolean getOpenstatus() {return openstatus;}
 	public String getProjectName() {
 		return projectName;
 	}//ends getProjectName
@@ -56,7 +57,7 @@ public class Project {
 	{
 		int projectID=0;
 		try {
-			String sql="insert into projects (projectname,abstract,description,adminID) value ('"+projectName+"','"+projectAbstract+"','"+description+"','"+administratorID+"');";
+			String sql="insert into projects (projectname,abstract,description,adminID,openstatus) value ('"+projectName+"','"+projectAbstract+"','"+description+"','"+administratorID+"',1);";
 			System.out.println(sql);
 			st.execute(sql);
 			sql="select projectID from projects where projectname='"+projectName+"';";

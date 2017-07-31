@@ -88,7 +88,7 @@
 							<section id="one">
 								<div class="container">
 									<b><h3>Create a Project</h3></b>
-									<button onclick="send()">Click me</button>
+									
 									<div class="features">
 										<article>
 											<form method="post" action="project_register">
@@ -148,6 +148,7 @@
 													</div>
 												</div>
 											</form>
+											<button onclick="send()">Send feed to others</button>
 										</article>
 									</div>
 								</div>

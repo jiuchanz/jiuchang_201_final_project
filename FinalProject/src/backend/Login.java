@@ -7,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import classes.User;
+import classes.*;
 
 /**
  * Servlet implementation class Login
@@ -51,6 +54,7 @@ public class Login extends HttpServlet {
 		  String username=request.getParameter("uname");
 		  String password=request.getParameter("psw");
 		  u = new User(username, password);
+		  Vector<Project> projects = new Vector<Project>(1,1);
 		  try {
 			  String sql = "SELECT fname, lname, email, phone FROM users WHERE username='" + username + "';";
 			  rs = st.executeQuery(sql);
@@ -71,11 +75,32 @@ public class Login extends HttpServlet {
 			  while(rs.next()){
 				  u.addSkills(rs.getInt("skillID"));
 			  }
+			  
+			  sql = "SELECT * FROM projects;";
+			  rs = st.executeQuery(	sql);
+			  while(rs.next()) {
+				  System.out.println("1");
+				  int adminId = rs.getInt("adminID");
+				  int projectID = rs.getInt("projectID");
+				  String projectName = rs.getString("projectName");
+				  String projectAbstract = rs.getString("abstract");
+				  String description = rs.getString("description");
+				  String sq = "SELECT skillID FROM project_skill WHERE projectID='" + projectID + "';";
+				  List<Integer> skills = new ArrayList<Integer>();
+				  ResultSet r = st.executeQuery(sq);
+				  while(r.next()) {
+					  int skill = r.getInt("skillID");
+					  skills.add(skill);
+				  }
+				  Project p = new Project(adminId, projectName, projectAbstract, skills, description);
+				  projects.add(p);
+				  System.out.println(projectName);
+			  }
 		  }catch(SQLException sqle) {
 			  System.out.println("sqle: " + sqle.getMessage());
 		  }
+		  request.getSession().setAttribute("projects", projects);
 		  request.getSession().setAttribute("currUser", u);
-		  
 		  request.getRequestDispatcher("user_listing.jsp").forward(request, response);
 	}
 

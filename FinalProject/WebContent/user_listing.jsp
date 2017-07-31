@@ -1,4 +1,5 @@
 <%@ page import="classes.*"%>
+<%@ page import="java.util.Vector" %>
 <!DOCTYPE HTML>
 <!--
 	Read Only by HTML5 UP
@@ -23,6 +24,8 @@
 		String lname = u.getLname();
 		System.out.println(fname);
 		String username=u.getUsername();
+		Vector<Project> projects=(Vector<Project>) request.getSession().getAttribute("projects");
+		System.out.println(projects.get(0).getProjectName());
 	%>
 	</head>
 	<body onload="connect('<%=username%>')">
@@ -31,15 +34,10 @@
 			<section id="header">
 				<header>
 					<span class="image avatar"><img src="images/miller.jpg" alt="" /></span>
-<<<<<<< HEAD
-					
-					<h1 id="logo"><a href="#"><%=fname %> <%=lname %></a></h1>
-			
 
-					
-=======
+
 					<h1 id="logo"><a href="#"><%=fname %> <%=lname %></a></h1>
->>>>>>> 082ce78cd0bebbb37a6c022883c75030cd540090
+
 				</header>
 				<nav id="nav">
 					<ul>
@@ -65,31 +63,26 @@
 							<section id="one">
 								<div class="container">
 								
-								<textarea readonly="true" rows="10" cols="80" id="log"></textarea>
 								
-									<b><h3>Project 1</h3></b>
+								
+									<% for (int i=0;i<projects.size();i++) 
+									{
+										
+									
+									%>
 									
 									<div class="features">
 										<article>
 											<a href="#" class="image"><img src="images/miller.jpg"  onerror = "this.src = 'images/light.jpg'"/></a>
 											<div class="inner">
-												<h4>Project Title</h4>
-												<p>Project brief introduction</p>
+												<h4><%=projects.get(i).getProjectName() %></h4>
+												<p><%=projects.get(i).getProjectAbstract() %></p>
 											</div>
 										</article>
 										
 									</div>
-									<b><h3>Project 2</h3></b>
-									<div class="features">
-										<article>
-											<a href="#" class="image"><img src="images/miller.jpg"  onerror = "this.src = 'images/light.jpg'"/></a>
-											<div class="inner">
-												<h4>Project Title</h4>
-												<p>Project brief introduction</p>
-											</div>
-										</article>
-										
-									</div>
+									<% }%>
+									
 									<div id="addition"></div>	
 								</div>
 							</section>
