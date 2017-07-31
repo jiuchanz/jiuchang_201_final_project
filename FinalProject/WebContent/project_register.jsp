@@ -12,6 +12,7 @@
 		User u = (User)request.getSession().getAttribute("currUser");
 		String fname = u.getFname();
 		String lname = u.getLname();
+		String bio=u.getBio();
 		System.out.println(fname);
 		String username=u.getUsername();
 	%>
@@ -61,8 +62,8 @@
 			<section id="header">
 				<header>
 					<span class="image avatar"><img src="images/miller.jpg" alt="" /></span>
-					<h1 id="logo"><a href="#">Fname Lname</a></h1>
-					<p>Insert user bio</p>
+					<h1 id="logo"><a href="#"><%=fname %><%=lname %></a></h1>
+					<p><%=bio %></p>
 				</header>
 				<nav id="nav">
 					<ul>
@@ -82,7 +83,7 @@
 
 		<!-- Wrapper -->
 			<div id="wrapper">
-				<!-- Main -->
+				<!-- Main --> 
 					<div id="main">
 						<!-- One -->
 							<section id="one">

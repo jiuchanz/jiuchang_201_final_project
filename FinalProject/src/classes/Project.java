@@ -6,25 +6,27 @@ import java.sql.Statement;
 
 public class Project {
 	private String projectName;
-	private Set<Integer> set = new HashSet<Integer>();
+	private int projectID;
+	private Set<Integer> skills = new HashSet<Integer>();
 	private String projectAbstract;
 	private String description;
 	private int administratorID;
 	private boolean openstatus=true;
-	public Project(int userId, String projectName, String projectAbstract, List<Integer> skills,
-			String description) {
-		
+	public Project(int userId, String projectName, String projectAbstract, String description) {
 		administratorID = userId;
 		this.projectName = projectName;
 		this.projectAbstract = projectAbstract;
 		this.description = description;
-		
-		for(int h = 0; h < skills.size(); h++) {
-	            set.add(skills.get(h));
-	    }//ends for	
 	}//ends project constructor
 	public void setOpenstatus(boolean value){this.openstatus=value;}
 	public boolean getOpenstatus() {return openstatus;}
+	public int getProjectID() {
+		return projectID;
+	}
+	public void addProjectID(int p) {
+		projectID = p;
+	}
+	
 	public String getProjectName() {
 		return projectName;
 	}//ends getProjectName
@@ -38,7 +40,7 @@ public class Project {
 		return administratorID;	
 	}//ends getProjectContactID
 	public Set<Integer> getSkillSet(){
-		return set;
+		return skills;
 	}//ends getSkillSet
 	public Project getProject() {
 		return this;
@@ -53,6 +55,10 @@ public class Project {
 	public void setProjectDescription(String description) {
 		this.description = description;
 	}//ends getProjectDescription
+	public void addSkill(int skill) {
+		skills.add(skill);
+	}
+	public void setSkillSet(Set<Integer> skills) {this.skills=skills;}
 	public void addProjectToDB(Statement st)
 	{
 		int projectID=0;
@@ -68,7 +74,7 @@ public class Project {
 				projectID=rs.getInt("projectID");
 			sql="insert into project_skill (skillID,projectID) value";
 			int idx=0;
-			for(Integer i : set)
+			for(Integer i : skills)
 			{
 				if(idx>0) sql+=",";
 				sql+="("+i+","+projectID+")";
@@ -94,4 +100,3 @@ public class Project {
 	}
 
 }//ends project class
-

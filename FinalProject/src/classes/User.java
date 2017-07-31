@@ -18,7 +18,7 @@ public class User {
 	private int id	;  //get from databases
 	private String resumeUrl ;
 	private List<Integer> skills = new ArrayList<Integer>();
-	private Set<Integer> projects ;
+	private Set<Integer> projects=new HashSet<Integer>();
 	private String email;
 	private String aboutMe;
 	private String phone;
@@ -35,6 +35,7 @@ public class User {
 		aboutMe="";
 		phone="";
 		imgUrl="";
+		
 	}
 	public void setFName(String fname) {
 		this.fname = fname;

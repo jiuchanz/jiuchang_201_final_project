@@ -1,10 +1,27 @@
+<%@ page import="classes.*, backend.*, java.sql.*, java.util.*"%>
 <!DOCTYPE HTML>
 <!--
 	Read Only by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<%if(session.isNew()){response.sendRedirect("index.jsp"); return;} %>
+<%if(session.isNew()){response.sendRedirect("index.jsp"); return;}
+	Vector<Project> projects=(Vector<Project>) request.getSession().getAttribute("projects");
+	String projectName=(String) request.getSession().getAttribute("projectname");
+	String projectID="";
+	if(projectName==null) projectID=request.getParameter("projectInput");
+	System.out.println(projectID);
+	Project project=null;
+	for(int i=0;i<projects.size();i++)
+	{
+		if(projects.get(i).getProjectID()==Integer.valueOf(projectID))
+			project=projects.get(i);
+	}
+	List<String> skillnames = (List<String>)session.getAttribute("skillNames");
+	skillnames=new ArrayList<String>();
+	List<User> recUser = (List<User>)session.getAttribute("recommendUsers");
+	recUser=new ArrayList<User>();
+%> 
 <html>
 	<head>
 		<title>Profile</title>
@@ -14,13 +31,20 @@
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<script src="user_listing.js"></script>
+		<% User u = (User)request.getSession().getAttribute("currUser");
+		String username = u.getUsername();
+		String fname = u.getFname();
+		if(fname==null){fname="";}
+		String lname = u.getLname();
+		if(lname==null){lname="";} %>
 	</head>
 	<body>
 		<!-- Header -->
 			<section id="header">
 				<header>
 					<span class="image avatar"><img src="images/miller.jpg" alt="" /></span>
-					<h1 id="logo"><a href="#">Fname Lname</a></h1>
+					<h1 id="logo"><a href="#"><%=fname %> <%=lname %></a></h1>
 					<p>Insert user bio</p>
 				</header>
 				<nav id="nav">
@@ -50,24 +74,40 @@
 						<!-- One -->
 							<section id="one">
 								<div class="container">
-									<b><h3>Project Name: </h3></b>
+									<b><h3>Project Name:<%=project.getProjectName()%> </h3></b>
 								</div>
 							</section>
 						<!-- Two -->
 							<section id="two">
 								<div class="container">
 									<h3>Skillsets</h3>
-									<p>List all the skillsets here</p>
+									<p><%for(int h = 0; h < skillnames.size(); h++){%>
+										<%=skillnames.get(h)%>
+										<%}//ends for%></p>
 								</div>
 							</section>
 						<!-- Three -->
 							<section id="three">
 								<div class="container">
 									<h3>Abstract:</h3>
+									<p><%=project.getProjectAbstract()%></p>
 									<h3>Description:</h3>
-									<p>This is where the detailed description will go</p>
-									<h3>Contact Project Liason</h3>
-									<a href="mailto: helenarh@usc.edu">helena's email address</a>
+									<p><%=project.getProjectDescription()%></p>
+									<h3>Recommended Users: </h3>
+									<fieldset>
+										<legend id="legendTitle"></legend>
+										<div>
+											<p><%for(int h = 0; h < recUser.size(); h++){
+												if(!username.equals(recUser.get(h).getUsername())){%>
+													<%=recUser.get(h).getFname()%> <%=recUser.get(h).getLname()%>	
+												<%}
+												else{%>
+													No Recommended Users
+												
+												<%}//ends else
+											}//ends for%></p>	
+										</div>
+									</fieldset>
 								</div>
 							</section>
 					</div>

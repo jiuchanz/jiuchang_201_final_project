@@ -5,7 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -48,7 +51,7 @@ public class project_register extends HttpServlet {
 				userID=rs.getInt("userID");
 			}
 			System.out.println(userID);
-			List<Integer> skills=new  ArrayList<Integer>();
+			Set<Integer> skills=new HashSet<Integer>();
 			if(selected!=null)
 			{
 				for(int h=0;h<selected.length;h++)
@@ -65,19 +68,46 @@ public class project_register extends HttpServlet {
 				}
 			}
 			
-			Project project =new Project(userID,projectName,brief,skills,description);
+			Project project =new Project(userID,projectName,brief,description);
+			project.setSkillSet(skills);
 			
 			project.addProjectToDB(st);
 			
+			
 			HttpSession session =request.getSession();
-			session.setAttribute("project", project);
+			Vector<Project> projects=new Vector<Project>();
+			
+			session.setAttribute("projectname", project.getProjectName());
 	         
-	         RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/project_detail.jsp");
-	         dispatch.forward(request, response);
+	        
+	         
+			  sql = "SELECT * FROM projects;";
+			  rs = st.executeQuery(sql);
+			  
+			  while(rs.next()) {
+				  int adminId = rs.getInt("adminID");
+				  int projectID = rs.getInt("projectID");
+				  projectName = rs.getString("projectName");
+				  String projectAbstract = rs.getString("abstract");
+				  description = rs.getString("description");
+				  Project p = new Project(adminId, projectName, projectAbstract, description);
+				  p.addProjectID(projectID);
+				  p.setOpenstatus(rs.getBoolean("openstatus"));
+				  projects.add(p);
+			  }
+			  for(int i = 0; i < projects.size(); i++) {
+				  int projectID = projects.get(i).getProjectID();
+				  sql = "SELECT skillID FROM project_skill WHERE projectID='" + projectID + "';";
+				  ResultSet r = st.executeQuery(sql);
+				  while(r.next()) {
+					  int skill = r.getInt("skillID");
+					  projects.get(i).addSkill(skill);
+				  }
+			  }
+			  session.setAttribute("projects", projects);
 			
-			
-			
-			
+			  RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/project_detail.jsp");
+		         dispatch.forward(request, response);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

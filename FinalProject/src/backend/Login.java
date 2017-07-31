@@ -51,51 +51,59 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		  String username=request.getParameter("uname");
+			String username=request.getParameter("uname");
 		  String password=request.getParameter("psw");
 		  u = new User(username, password);
 		  Vector<Project> projects = new Vector<Project>(1,1);
+		  
 		  try {
-			  String sql = "SELECT fname, lname, email, phone FROM users WHERE username='" + username + "';";
+			  String sql = "SELECT fname, lname, email, phone, userID FROM users WHERE username='" + username + "';";
 			  rs = st.executeQuery(sql);
 			  if(rs.next()) {
 				  u.setFName(rs.getString("fname"));
 				  u.setLName(rs.getString("lname"));
 				  u.setEmail(rs.getString("email"));
 				  u.setPhone(rs.getString("phone"));
+				  u.setID(rs.getInt("userID"));
 			  }
 			  //System.out.println(u.getFname() + " " + u.getLname() + " " + u.getEmail() + " " + u.getPhone());
 			  //add skills to user
-			  sql = "SELECT userID FROM users WHERE username='" + username + "';";
-			  ResultSet rs = st.executeQuery(sql);
-			  int userID = 0;
-			  while(rs.next()) {userID = rs.getInt("userID");}
+			  int userID = u.getID(); 
 			  sql = "SELECT skillID FROM user_skills WHERE userID='" + userID + "';";
 			  rs = st.executeQuery(sql);
 			  while(rs.next()){
 				  u.addSkills(rs.getInt("skillID"));
 			  }
-			  
-			  sql = "SELECT * FROM projects;";
-			  rs = st.executeQuery(	sql);
+			  //add projects to user class
+			  sql = "SELECT projectID FROM user_projects WHERE userID='" + userID + "';";
+			  rs = st.executeQuery(sql);
 			  while(rs.next()) {
-				  System.out.println("1");
+				  u.insertProject(rs.getInt("projectID"));
+			  }
+			  //create all projects
+			  sql = "SELECT * FROM projects;";
+			  rs = st.executeQuery(sql);
+			  while(rs.next()) {
 				  int adminId = rs.getInt("adminID");
 				  int projectID = rs.getInt("projectID");
 				  String projectName = rs.getString("projectName");
 				  String projectAbstract = rs.getString("abstract");
 				  String description = rs.getString("description");
-				  String sq = "SELECT skillID FROM project_skill WHERE projectID='" + projectID + "';";
-				  List<Integer> skills = new ArrayList<Integer>();
-				  ResultSet r = st.executeQuery(sq);
+				  Project p = new Project(adminId, projectName, projectAbstract, description);
+				  p.addProjectID(projectID);
+				  projects.add(p);
+			  }
+			  //add skills to projects
+			  for(int i = 0; i < projects.size(); i++) {
+				  int projectID = projects.get(i).getProjectID();
+				  sql = "SELECT skillID FROM project_skill WHERE projectID='" + projectID + "';";
+				  ResultSet r = st.executeQuery(sql);
 				  while(r.next()) {
 					  int skill = r.getInt("skillID");
-					  skills.add(skill);
+					  projects.get(i).addSkill(skill);
 				  }
-				  Project p = new Project(adminId, projectName, projectAbstract, skills, description);
-				  projects.add(p);
-				  System.out.println(projectName);
 			  }
+			  
 		  }catch(SQLException sqle) {
 			  System.out.println("sqle: " + sqle.getMessage());
 		  }

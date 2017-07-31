@@ -19,6 +19,9 @@
 	<body>
 	<%
 		User u = (User)request.getSession().getAttribute("currUser");
+		int userID=u.getID();
+	
+		Vector<Project> projects=(Vector<Project>) request.getSession().getAttribute("projects");
 		String username = u.getUsername();
 		String fname = u.getFname();
 		if(fname==null){fname="";}
@@ -104,11 +107,135 @@
 							<section id="two">
 								<div class="container">
 									<h3>Projects</h3>
-									<select name="projects">
+									<script>
+									function changeType() {
+									    var x = document.getElementById("projects").value;
+									    if(x=='current')
+								    	{
+									    	document.getElementById("pastProject").style.display='none';
+									    	document.getElementById("adminProject").style.display='none';
+									    	document.getElementById("currentProject").style.display='block';
+								    	}
+									    else if(x=='past')
+									    {
+									    	document.getElementById("currentProject").style.display='none';
+									    	document.getElementById("adminProject").style.display='none';
+									    	document.getElementById("pastProject").style.display='block';
+									    }
+									    else 
+								    	{
+									    	document.getElementById("pastProject").style.display='none';
+									    	document.getElementById("currentProject").style.display='none';
+									    	document.getElementById("adminProject").style.display='block';
+									    	
+								    	}
+									    	
+									}
+									</script>
+									<select id="projects" onchange="changeType()">
 										<option value="current">Current Projects</option>
 										<option value="past">Past Projects</option>
 										<option value="admin">Admin Projects</option>
 									</select><br/>
+									
+									<div id="currentProject">
+									<%
+									
+									for(int i=0;i<projects.size();i++) 
+									{
+										
+										Project project=projects.get(i);
+										if(!u.getProjects().contains(project.getProjectID()))
+											continue;
+										
+										if(project.getOpenstatus()==false)
+										{
+											continue;
+										}
+										System.out.println("open: open? "+project.getOpenstatus());
+									%>
+										<p><%=project.getProjectName() %></p>
+										
+									<%	
+									}
+									%>
+									
+									</div>
+									<div id="pastProject" style="display: none">
+									<%
+									
+									for(int i=0;i<projects.size();i++) 
+									{
+										
+										Project project=projects.get(i);
+										if(!u.getProjects().contains(project.getProjectID()))
+											continue;
+										
+										if(project.getOpenstatus()==true)
+											continue;
+										System.out.println("false: open? "+project.getOpenstatus());
+									%>
+										<p><%=project.getProjectName() %></p>
+										
+									<%	
+									}
+									%>
+									
+									</div>
+									<div id="adminProject" style="display:none">
+									<%for(int i=0;i<projects.size();i++) 
+									{
+										
+										Project project=projects.get(i);
+										int adminID=project.getProjectContactID();
+										System.out.println(adminID+" "+userID);
+										if(adminID!=userID)
+											continue;
+									%>
+										<p><%=project.getProjectName() %></p>
+									<%	
+									}
+									%>
+									
+									</div>
+									<script type="text/javascript">
+									function onchange1() {
+										console.log(document.getElementById("projectSelect").value);
+									}
+									</script>
+									<select id="projectSelect" onchange="onchange1()">
+									<%
+									
+									for(int i=0;i<projects.size();i++) 
+									{
+										
+										Project project=projects.get(i);
+										if(!u.getProjects().contains(project.getProjectID()))
+											continue;
+										
+										
+									%>
+										
+										
+										<option value=<%=String.valueOf(project.getProjectID())%>><%=project.getProjectName() %></option>
+									<%	
+									}
+									%>
+									</select><br/>
+									<script>
+									function goProject() {
+										
+									    var x = document.getElementById("projectSelect").value;
+									    
+									    document.myform.projectInput.value = x;
+									    return true;
+									}
+									</script>
+									<form name="myform" method="POST" action="project_detail.jsp" onsubmit="goProject()">
+										<input type="text" name="projectInput" value="Create Project" style="display: none" />
+										<input type="submit" name="goProject!" value="go Project" class="special"/>
+									</form>	
+									
 									<form method="POST" action="project_register.jsp">
 										<input type="submit" name="createProject" value="Create Project" class="special"/>
 									</form>
